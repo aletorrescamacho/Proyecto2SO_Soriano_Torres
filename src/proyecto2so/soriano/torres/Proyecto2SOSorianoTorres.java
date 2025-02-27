@@ -14,8 +14,7 @@ public class Proyecto2SOSorianoTorres {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
-        //
+        // logica para revisar el txt (cuyo formato aun no he definido
     }
     
 }
