@@ -32,6 +32,47 @@ public class MainWindow extends javax.swing.JFrame {
 
     }
 
+    private void cargarLogDesdeArchivo() {
+    File archivo = new File("log.txt");
+    if (!archivo.exists()) {
+        return; // Si el archivo no existe, no se carga nada
+    }
+
+    try (BufferedReader reader = new BufferedReader(new FileReader(archivo))) {
+        StringBuilder contenido = new StringBuilder();
+        String linea;
+        while ((linea = reader.readLine()) != null) {
+            contenido.append(linea).append("\n");
+        }
+        taLog.setText(contenido.toString()); // Cargar el contenido en el JTextArea
+    } catch (IOException e) {
+        JOptionPane.showMessageDialog(this, "Error al cargar el log: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    }
+}
+
+    private void guardarLogEnArchivo() {
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter("log.txt"))) {
+        writer.write(taLog.getText()); // Guarda todo el contenido del JTextArea
+    } catch (IOException e) {
+        JOptionPane.showMessageDialog(this, "Error al guardar el log: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    }
+}
+
+    private void registrarLog(String accion, String nombre) {
+    // Obtener el usuario actual
+    String usuario = lbUsuact.getText();
+
+    // Obtener la fecha y hora actual
+    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+    String fechaHora = sdf.format(new Date());
+
+    // Construir el mensaje del log
+    String mensaje = "[" + fechaHora + "] " + usuario + " " + accion + ": " + nombre + "\n";
+
+    // Agregar el mensaje al JTextArea (taLog)
+    taLog.append(mensaje);
+}
+
     private void cargarUsuarioDesdeArchivo() {
     File archivo = new File("usuario.txt");
     if (!archivo.exists()) {
@@ -552,6 +593,8 @@ private DefaultMutableTreeNode cargarNodosDesdeJSON(JSONObject jsonObject) {
 
     DefaultTreeModel model = (DefaultTreeModel) jTree1.getModel();
     model.reload();
+    
+    registrarLog("modificó", nuevoNombre);
         
     }//GEN-LAST:event_btEditarActionPerformed
 
@@ -581,13 +624,17 @@ private DefaultMutableTreeNode cargarNodosDesdeJSON(JSONObject jsonObject) {
     if (confirm != JOptionPane.YES_OPTION) {
         return;
     }
-
+    
+    String nombreEliminado = selectedNode.toString();
     // Si el nodo tiene hijos, eliminamos todos sus subnodos
     selectedNode.removeAllChildren(); 
 
     // Eliminar el nodo padre
     parentNode.remove(selectedNode);
     model.reload();
+    
+    
+    registrarLog("eliminó", nombreEliminado);
     }//GEN-LAST:event_btEliminarActionPerformed
 
     private void jTree1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTree1MouseClicked
@@ -693,20 +740,22 @@ private DefaultMutableTreeNode cargarNodosDesdeJSON(JSONObject jsonObject) {
 
     tfNombre.setText("");
     tfLongitud.setText("");
-
-
+    
+    registrarLog("creó", nombre);
 
     }//GEN-LAST:event_btCrearActionPerformed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
          cargarArbolDesdeJSON();
          cargarUsuarioDesdeArchivo();
+         cargarLogDesdeArchivo();
     }//GEN-LAST:event_formWindowOpened
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         DefaultMutableTreeNode root = (DefaultMutableTreeNode) jTree1.getModel().getRoot();
     guardarArbolEnJSON(root);
      guardarUsuarioEnArchivo(lbUsuact.getText());
+     guardarLogEnArchivo();
     }//GEN-LAST:event_formWindowClosing
 
     private void btCambiarusuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCambiarusuActionPerformed

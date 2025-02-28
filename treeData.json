@@ -1,10 +1,26 @@
 {
-    "hijos": [{
-        "hijos": [{
+    "hijos": [
+        {
+            "hijos": [
+                {
+                    "hijos": [],
+                    "nombre": "ale1234 [Tamaño: 1 | Permisos: rwx | Creado: 27/02/2025 22:43:29]"
+                },
+                {
+                    "hijos": [],
+                    "nombre": "sss [Directorio | Permisos: rwx | Creado: 27/02/2025 23:20:33]"
+                }
+            ],
+            "nombre": "hola23 [Directorio | Permisos: rwx | Creado: 27/02/2025 22:42:55]"
+        },
+        {
             "hijos": [],
-            "nombre": "ale1234 [Tamaño: 1 | Permisos: rwx | Creado: 27/02/2025 22:43:29]"
-        }],
-        "nombre": "hola23 [Directorio | Permisos: rwx | Creado: 27/02/2025 22:42:55]"
-    }],
+            "nombre": "q [Tamaño: 1 | Permisos: rwx | Creado: 27/02/2025 23:16:06]"
+        },
+        {
+            "hijos": [],
+            "nombre": "ssfffffffffff [Tamaño: 33 | Permisos: rwx | Creado: 27/02/2025 23:20:16]"
+        }
+    ],
     "nombre": "JTree"
 }
