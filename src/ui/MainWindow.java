@@ -668,7 +668,7 @@ private DefaultMutableTreeNode cargarNodosDesdeJSON(JSONObject jsonObject) {
             JOptionPane.showMessageDialog(this, "La longitud debe ser un número entero mayor a 0.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-
+//
         int longitud = Integer.parseInt(longitudStr);
         if (longitud <= 0) {
             JOptionPane.showMessageDialog(this, "La longitud debe ser mayor a 0.", "Error", JOptionPane.ERROR_MESSAGE);
