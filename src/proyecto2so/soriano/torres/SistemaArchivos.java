@@ -18,11 +18,13 @@ public class SistemaArchivos {
     private boolean[] bitmap; // Bitmap para gestionar bloques libres
     private Bloque[] bloques; // Array de bloques del disco
     private int bloquesLibres; // Contador de bloques disponibles
+    private ListaEnlazadaArchivos archivos; // Lista enlazada de archivos
 
     public SistemaArchivos() {
         this.bitmap = new boolean[NUMERO_BLOQUES]; // Inicialmente, todos los bloques están libres
         this.bloques = new Bloque[NUMERO_BLOQUES];
         this.bloquesLibres = NUMERO_BLOQUES; // Todos los bloques están libres al inicio
+        this.archivos = new ListaEnlazadaArchivos();  //lista enlazada de archivos en el pryecto
 
         // Inicializar los bloques y el bitmap
         for (int i = 0; i < NUMERO_BLOQUES; i++) {
@@ -87,6 +89,47 @@ public class SistemaArchivos {
     public int getBloquesLibres() {
         return bloquesLibres;
     }
+    
+     public ListaEnlazadaArchivos getListaArchivos() {
+        return archivos;
+    }
+
+    // ✅ Función para agregar un archivo a la lista enlazada de archivos
+    public void agregarArchivo(Archivo archivo) {
+        archivos.agregar(archivo);
+        System.out.println("Archivo '" + archivo.nombre + "' agregado al sistema.");
+    }
+    
+    //funcion para eliminar un archivo de la lista enlazada de archivos
+    public void eliminarArchivo(Archivo archivo) {
+        archivos.eliminar(archivo); // Llamar a la función de eliminar en la lista enlazada
+        System.out.println("Archivo '" + archivo.nombre + "' eliminado del sistema.");
+}
+
+    
+    //  Función para buscar un archivo en la lista enlazada por nombre
+    public Archivo buscarArchivo(String nombre) {
+        Archivo actual = archivos.getCabeza(); // Obtener el primer archivo de la lista
+
+        while (actual != null) {
+            if (actual.nombre.equals(nombre)) {
+                return actual; // Se encontró el archivo
+            }
+            actual = actual.siguiente;
+        }
+        return null; // No se encontró el archivo
+    } // Esta funcion retorna el archivo cuyo nombre es pasado por parametro 
+    
+    public void renombrarArchivo(Archivo archivo, String nuevoNombre) {
+    if (archivo == null || nuevoNombre == null || nuevoNombre.trim().isEmpty()) {
+        System.out.println("Error: El archivo o el nuevo nombre no pueden ser nulos o vacíos.");
+        return;
+    }
+    archivo.nombre = nuevoNombre; // Cambiar el nombre del archivo
+    System.out.println("Archivo renombrado a: " + nuevoNombre);
+}
+
+    
 }
 
 

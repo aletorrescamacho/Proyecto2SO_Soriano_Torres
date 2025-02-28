@@ -17,6 +17,7 @@ import java.nio.file.*;
 import org.json.JSONException;
 import proyecto2so.soriano.torres.Archivo;
 import proyecto2so.soriano.torres.SistemaArchivos;
+import proyecto2so.soriano.torres.Util;
 
 
 /**
@@ -25,6 +26,7 @@ import proyecto2so.soriano.torres.SistemaArchivos;
  */
 public class MainWindow extends javax.swing.JFrame {
 private SistemaArchivos sistemaArchivos; // Instancia de SistemaArchivos
+private Util util;
     /**
      * Creates new form MainWindow
      */
@@ -540,19 +542,40 @@ private DefaultMutableTreeNode cargarNodosDesdeJSON(JSONObject jsonObject) {
         return;
     }
 
+    // variable que guarda el nuevo nombre que se le va a dar al archivo/directorio del textfield
     String nuevoNombre = tfSelectednode.getText().trim();
     if (nuevoNombre.isEmpty()) {
         JOptionPane.showMessageDialog(this, "El nombre no puede estar vacío.", "Error", JOptionPane.ERROR_MESSAGE);
         return;
     }
 
-    // Obtener la información adicional del nodo sin modificarla
+    
+    // variable que tiene el string del texto del nodo seleccionado archivo o directorio
     String nodoTexto = selectedNode.getUserObject().toString();
+    
+    //obtenemos detalles del archivo
     int index = nodoTexto.indexOf("[");
     String detalles = (index != -1) ? nodoTexto.substring(index) : ""; // Mantener todo lo demás
-
-    // Actualizar el nodo con el nuevo nombre sin perder datos
+    
+    //debemos obtener el nombre ORIGINAL del archivo antes de modificarlo para cambiarlo tambien en la ll de archivos si es que es un archivo, si no pues no pasa nada
+    String nombreOg = util.extraerNombreArchivo(nodoTexto);
+    
+    //antes de modificar el nombre en el JTREE, si se trata de un archivo, lo hacemos en el objeto arhcivo correpondiente al archivo seleccionado:
+    //LOGICA TOCHA Y MANIPULACION DE LAS EDDS PARA MODIFICAR EFICIENTEMENTE EL NOMBRE DE UN ARCHIVO
+    //verificar si es un archivo o es un directorio
+    if (nodoTexto.contains("[Tamaño:")) {
+       
+       //buscamos el archivo con la funcion de buscar archivos de la clase sistemaarchivos con su nombre original antes de  er modificado
+       Archivo archivoModif = sistemaArchivos.buscarArchivo(nombreOg);
+     
+       //ahora modificamos el nombre del archivo seleccionado 
+       sistemaArchivos.renombrarArchivo(archivoModif, nuevoNombre);  
+    }
+    
+    // Actualizar el nodo con el nuevo nombre sin perder datos EN EL JTREE
     selectedNode.setUserObject(nuevoNombre + " " + detalles);
+    
+    
 
     DefaultTreeModel model = (DefaultTreeModel) jTree1.getModel();
     model.reload();
@@ -586,10 +609,23 @@ private DefaultMutableTreeNode cargarNodosDesdeJSON(JSONObject jsonObject) {
         return;
     }
     
+    
+    //LOGICA TOCHA Y MANIPULACION DE LAS EDDS PARA ELIMINAR EFICIENTEMENTE UN ARCHIVO
     //verificar si es un archivo o es un directorio
     if (selectedNode.getUserObject().toString().contains("[Tamaño:")) {
         
-        
+       //dado el string completo que se muestra en el jtree, usamos la funcion que esta en la clase util que nos permite extraer solo el nombre del archivo 
+       String nomArchivoElim = util.extraerNombreArchivo(selectedNode.getUserObject().toString());
+       
+       //buscamos el archivo con la funcion de buscar archivos de la clase sistemaarchivos
+       Archivo archivoElim = sistemaArchivos.buscarArchivo(nomArchivoElim);
+       
+       //con el archivo encontrado, liberamos sus bloques asignados
+       sistemaArchivos.liberarBloquesArchivo(archivoElim);
+       
+       //ahora eliminamos el archivo seleccionado de la lista enlazada de archivos
+       sistemaArchivos.eliminarArchivo(archivoElim);
+
         
     }
 
@@ -693,6 +729,7 @@ private DefaultMutableTreeNode cargarNodosDesdeJSON(JSONObject jsonObject) {
         //crear archivo objeto tipo archivo
         Archivo nuevoArchivo = new Archivo(nombre, longitud);
         sistemaArchivos.asignarBloquesArchivo(nuevoArchivo, longitud);
+        sistemaArchivos.agregarArchivo(nuevoArchivo);
 
         //  **Evitar que el archivo tenga hijos**
         newNode.setAllowsChildren(false);
