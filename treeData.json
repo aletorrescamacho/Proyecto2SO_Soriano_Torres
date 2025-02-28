@@ -1,0 +1,10 @@
+{
+    "hijos": [{
+        "hijos": [{
+            "hijos": [],
+            "nombre": "ale1234 [Tamaño: 1 | Permisos: rwx | Creado: 27/02/2025 22:43:29]"
+        }],
+        "nombre": "hola23 [Directorio | Permisos: rwx | Creado: 27/02/2025 22:42:55]"
+    }],
+    "nombre": "JTree"
+}
