@@ -22,6 +22,8 @@ public class Proyecto2SOSorianoTorres {
                 new MainWindow().setVisible(true); // Mostrar la ventana principal
             }
         });
+        
+        //
     }
     
 }
