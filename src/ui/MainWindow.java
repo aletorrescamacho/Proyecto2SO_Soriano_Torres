@@ -15,17 +15,21 @@ import org.json.JSONObject;
 import java.io.*;
 import java.nio.file.*;
 import org.json.JSONException;
+import proyecto2so.soriano.torres.Archivo;
+import proyecto2so.soriano.torres.SistemaArchivos;
+
 
 /**
  *
  * @author Aless
  */
 public class MainWindow extends javax.swing.JFrame {
-
+private SistemaArchivos sistemaArchivos; // Instancia de SistemaArchivos
     /**
      * Creates new form MainWindow
      */
     public MainWindow() {
+        this.sistemaArchivos = new SistemaArchivos(); // Inicializar sistema de archivos
         initComponents();
         this.setLocationRelativeTo(null); 
         jTree1.setCellRenderer(new CustomTreeRenderer());
@@ -581,6 +585,13 @@ private DefaultMutableTreeNode cargarNodosDesdeJSON(JSONObject jsonObject) {
     if (confirm != JOptionPane.YES_OPTION) {
         return;
     }
+    
+    //verificar si es un archivo o es un directorio
+    if (selectedNode.getUserObject().toString().contains("[Tamaño:")) {
+        
+        
+        
+    }
 
     // Si el nodo tiene hijos, eliminamos todos sus subnodos
     selectedNode.removeAllChildren(); 
@@ -678,6 +689,10 @@ private DefaultMutableTreeNode cargarNodosDesdeJSON(JSONObject jsonObject) {
         // Formato del archivo con su información
         String infoArchivo = nombre + " [Tamaño: " + longitud + " | Permisos: " + permisos + " | Creado: " + fechaCreacion + "]";
         newNode = new DefaultMutableTreeNode(infoArchivo);
+        
+        //crear archivo objeto tipo archivo
+        Archivo nuevoArchivo = new Archivo(nombre, longitud);
+        sistemaArchivos.asignarBloquesArchivo(nuevoArchivo, longitud);
 
         //  **Evitar que el archivo tenga hijos**
         newNode.setAllowsChildren(false);
