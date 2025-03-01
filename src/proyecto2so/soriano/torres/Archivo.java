@@ -12,7 +12,7 @@ package proyecto2so.soriano.torres;
 
 public class Archivo {
     public String nombre;
-    int tamano; // Número de bloques asignados
+    public int tamano; // Número de bloques asignados
     public ListaEnlazadaBloques listaBloques; // Lista enlazada de bloques del archivo
     public Archivo siguiente; // Referencia al siguiente archivo en la lista
 

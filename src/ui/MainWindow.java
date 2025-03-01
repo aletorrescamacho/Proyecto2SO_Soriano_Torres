@@ -16,8 +16,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.*;
 import java.nio.file.*;
+import javax.swing.table.DefaultTableModel;
 import org.json.JSONException;
 import proyecto2so.soriano.torres.Archivo;
+import proyecto2so.soriano.torres.Bloque;
 import proyecto2so.soriano.torres.SistemaArchivos;
 import proyecto2so.soriano.torres.Util;
 
@@ -30,13 +32,17 @@ public class MainWindow extends javax.swing.JFrame {
 public SistemaArchivos sistemaArchivos; // Instancia de SistemaArchivos
 private Util util;
  private PanelDisco panelDisco;
-
+private DefaultTableModel modeloTabla;
     /**
      * Creates new form MainWindow
      */
     public MainWindow() {
         this.sistemaArchivos = new SistemaArchivos(); // Inicializar sistema de archivos
         initComponents();
+         modeloTabla = (DefaultTableModel) tablaArchivos.getModel();
+        cargarTablaDesdeCSV();
+       
+
         this.setLocationRelativeTo(null); 
         jTree1.setCellRenderer(new CustomTreeRenderer());
         this.util = new Util(); 
@@ -52,6 +58,131 @@ private Util util;
     jPanelDisco.revalidate(); // Refrescar la interfaz
     jPanelDisco.repaint(); // Forzar que se vuelva a dibujar
     }
+
+    private void guardarTablaEnCSV() {
+    File archivo = new File("tabla_archivos.csv");
+
+    // Si la tabla está vacía, eliminar el archivo CSV si existe
+    if (modeloTabla.getRowCount() == 0) {
+        if (archivo.exists()) {
+            archivo.delete();
+            System.out.println("📂 No hay datos en la tabla. Archivo CSV eliminado.");
+        }
+        return;
+    }
+
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter(archivo))) {
+        // Escribir encabezados
+        writer.write("Nombre,Longitud,PrimerBloque,CadenaEnlaces");
+        writer.newLine();
+
+        // Recorrer filas de la tabla y escribir en el archivo
+        for (int i = 0; i < modeloTabla.getRowCount(); i++) {
+            String nombre = modeloTabla.getValueAt(i, 0).toString();
+            String longitud = modeloTabla.getValueAt(i, 1).toString();
+            String primerBloque = modeloTabla.getValueAt(i, 2).toString();
+            String cadenaEnlaces = modeloTabla.getValueAt(i, 3).toString()
+                    .replace("<html>", "").replace("</html>", "").replace("<br>", " / ");
+
+            // Escribir la línea en formato CSV
+            writer.write(nombre + "," + longitud + "," + primerBloque + "," + cadenaEnlaces);
+            writer.newLine();
+        }
+
+        System.out.println("✅ Tabla guardada en tabla_archivos.csv");
+    } catch (IOException e) {
+        System.err.println("❌ Error al guardar la tabla: " + e.getMessage());
+    }
+}
+
+    private void cargarTablaDesdeCSV() {
+    File archivo = new File("tabla_archivos.csv");
+
+    // Si el archivo no existe o está vacío, no hacer nada
+    if (!archivo.exists() || archivo.length() == 0) {
+        System.out.println("📂 No hay archivo CSV guardado o está vacío. Iniciando con una tabla vacía.");
+        return;
+    }
+
+    try (BufferedReader reader = new BufferedReader(new FileReader(archivo))) {
+        String linea;
+        reader.readLine(); // Saltar la primera línea (encabezado)
+
+        while ((linea = reader.readLine()) != null) {
+            String[] datos = linea.split(",", 4); // Dividir en 4 columnas
+
+            if (datos.length < 4) continue; // Si hay datos incompletos, ignorarlos
+
+            String nombre = datos[0];
+            int longitud = Integer.parseInt(datos[1]);
+            String primerBloque = datos[2];
+            String cadenaEnlaces = "<html>" + datos[3].replace(" / ", "<br>") + "</html>";
+
+            // Agregar fila a la tabla
+            modeloTabla.addRow(new Object[]{nombre, longitud, primerBloque, cadenaEnlaces});
+        }
+
+        System.out.println("✅ Tabla cargada desde tabla_archivos.csv");
+    } catch (IOException | NumberFormatException e) {
+        System.err.println("❌ Error al cargar la tabla: " + e.getMessage());
+    }
+}
+
+    
+private void actualizarTablaArchivos() {
+    // Limpiar la tabla antes de actualizar
+    modeloTabla.setRowCount(0);
+
+    Archivo archivoActual = sistemaArchivos.getListaArchivos().getCabeza();
+
+    while (archivoActual != null) {
+        String nombre = archivoActual.nombre;
+        int bloquesAsignados = archivoActual.tamano;
+        
+        // Obtener el primer bloque
+        Bloque primerBloque = archivoActual.listaBloques.getPrimerBloque();
+        String direccionPrimerBloque = (primerBloque != null) ? String.valueOf(primerBloque.id) : "N/A";
+
+        // 📌 **Corrección del ciclo infinito en la cadena de enlaces**
+        StringBuilder cadenaEnlaces = new StringBuilder("<html>");  
+        Bloque bloqueActual = primerBloque;
+        int contador = 0;
+
+        while (bloqueActual != null) {
+            cadenaEnlaces.append(bloqueActual.id);
+            contador++;  
+
+            // ✅ Solo agregar la flecha si hay un siguiente bloque **y no es el último**
+            if (bloqueActual.siguiente != null) {
+                if (contador % 5 == 0) {  
+                    cadenaEnlaces.append("<br>");  
+                } else {
+                    cadenaEnlaces.append(" → ");
+                }
+            }
+            
+            // Mover al siguiente bloque
+            bloqueActual = bloqueActual.siguiente;
+
+            // 🔥 Protección contra ciclos infinitos
+            if (contador > bloquesAsignados-1) {  // Asegurar que no sobrepase la cantidad de bloques asignados
+                break;
+            }
+        }
+
+        cadenaEnlaces.append("</html>"); // ✅ Cerrar correctamente el HTML
+
+        // Agregar fila a la tabla
+        modeloTabla.addRow(new Object[]{nombre, bloquesAsignados, direccionPrimerBloque, cadenaEnlaces.toString()});
+        
+        archivoActual = archivoActual.siguiente; // Pasar al siguiente archivo
+    }
+}
+
+
+
+
+
 
     private void cargarLogDesdeArchivo() {
     File archivo = new File("log.txt");
@@ -221,6 +352,9 @@ private DefaultMutableTreeNode cargarNodosDesdeJSON(JSONObject jsonObject) {
         jTree1 = new javax.swing.JTree();
         jPanel2 = new javax.swing.JPanel();
         jPanelDisco = new javax.swing.JPanel();
+        jPanel8 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tablaArchivos = new javax.swing.JTable();
         jPanel5 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         taLog = new javax.swing.JTextArea();
@@ -352,7 +486,7 @@ private DefaultMutableTreeNode cargarNodosDesdeJSON(JSONObject jsonObject) {
                     .addComponent(lbUsuact))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap(38, Short.MAX_VALUE))
         );
 
         jPanel4.setBackground(new java.awt.Color(57, 62, 70));
@@ -520,7 +654,7 @@ private DefaultMutableTreeNode cargarNodosDesdeJSON(JSONObject jsonObject) {
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 60, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(40, 40, 40))
         );
@@ -560,17 +694,55 @@ private DefaultMutableTreeNode cargarNodosDesdeJSON(JSONObject jsonObject) {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(239, 239, 239)
                 .addComponent(jPanelDisco, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(324, Short.MAX_VALUE))
+                .addContainerGap(385, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(46, 46, 46)
                 .addComponent(jPanelDisco, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(212, Short.MAX_VALUE))
+                .addContainerGap(230, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("SD y Tabla", jPanel2);
+        jTabbedPane1.addTab("SD", jPanel2);
+
+        tablaArchivos.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Nombre del Archivo", "Longitud", "Primer Bloque", "Cadena de Enlaces"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tablaArchivos.setRowHeight(150);
+        jScrollPane1.setViewportView(tablaArchivos);
+
+        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
+        jPanel8.setLayout(jPanel8Layout);
+        jPanel8Layout.setHorizontalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel8Layout.createSequentialGroup()
+                .addGap(215, 215, 215)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 643, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(78, Short.MAX_VALUE))
+        );
+        jPanel8Layout.setVerticalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel8Layout.createSequentialGroup()
+                .addGap(47, 47, 47)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(58, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("Tabla", jPanel8);
 
         jPanel5.setBackground(new java.awt.Color(34, 40, 49));
 
@@ -591,7 +763,7 @@ private DefaultMutableTreeNode cargarNodosDesdeJSON(JSONObject jsonObject) {
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel10)
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 642, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(195, Short.MAX_VALUE))
+                .addContainerGap(256, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -600,7 +772,7 @@ private DefaultMutableTreeNode cargarNodosDesdeJSON(JSONObject jsonObject) {
                 .addComponent(jLabel10)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 412, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(54, Short.MAX_VALUE))
+                .addContainerGap(72, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Log", jPanel5);
@@ -669,7 +841,14 @@ private DefaultMutableTreeNode cargarNodosDesdeJSON(JSONObject jsonObject) {
     //LOGICA TOCHA Y MANIPULACION DE LAS EDDS PARA MODIFICAR EFICIENTEMENTE EL NOMBRE DE UN ARCHIVO
     //verificar si es un archivo o es un directorio
     if (nodoTexto.contains("[Tamaño:")) {
-       
+       Archivo archivoActual = sistemaArchivos.getListaArchivos().getCabeza();
+        while (archivoActual != null) {
+            if (!archivoActual.nombre.equals(nombreOg) && archivoActual.nombre.equals(nuevoNombre)) {
+                JOptionPane.showMessageDialog(this, "Ya existe un archivo con el mismo nombre.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            archivoActual = archivoActual.siguiente; // Avanzar en la lista
+        }
        //buscamos el archivo con la funcion de buscar archivos de la clase sistemaarchivos con su nombre original antes de  er modificado
        Archivo archivoModif = sistemaArchivos.buscarArchivo(nombreOg);
      
@@ -677,6 +856,17 @@ private DefaultMutableTreeNode cargarNodosDesdeJSON(JSONObject jsonObject) {
        sistemaArchivos.renombrarArchivo(archivoModif, nuevoNombre);  
     }
     
+    else {
+    for (int i = 0; i < selectedNode.getParent().getChildCount(); i++) {
+        DefaultMutableTreeNode siblingNode = (DefaultMutableTreeNode) selectedNode.getParent().getChildAt(i);
+        String siblingName = siblingNode.toString();
+
+        if (!siblingNode.equals(selectedNode) && siblingName.startsWith(nuevoNombre + " [")) {
+            JOptionPane.showMessageDialog(this, "Ya existe un directorio con el mismo nombre en este nivel.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+    }
+}
     // Actualizar el nodo con el nuevo nombre sin perder datos EN EL JTREE
     selectedNode.setUserObject(nuevoNombre + " " + detalles);
     
@@ -686,7 +876,8 @@ private DefaultMutableTreeNode cargarNodosDesdeJSON(JSONObject jsonObject) {
     model.reload();
     
     registrarLog("modificó", nuevoNombre);
-        
+    actualizarTablaArchivos();
+    
     }//GEN-LAST:event_btEditarActionPerformed
 
     private void btEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEliminarActionPerformed
@@ -744,7 +935,8 @@ private DefaultMutableTreeNode cargarNodosDesdeJSON(JSONObject jsonObject) {
     parentNode.remove(selectedNode);
     model.reload();
     
-    
+    actualizarTablaArchivos();
+
     registrarLog("eliminó", nombreEliminado);
     }//GEN-LAST:event_btEliminarActionPerformed
 
@@ -822,6 +1014,17 @@ private DefaultMutableTreeNode cargarNodosDesdeJSON(JSONObject jsonObject) {
 
     DefaultMutableTreeNode newNode;
     if (tipo.equals("Archivo")) {
+        
+         Archivo archivoActual = sistemaArchivos.getListaArchivos().getCabeza();
+    while (archivoActual != null) {
+        if (archivoActual.nombre.equals(nombre)) {
+            JOptionPane.showMessageDialog(this, "Ya existe un archivo con el mismo nombre.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        archivoActual = archivoActual.siguiente; // Avanzar en la lista de archivos
+    }
+        
+        
         if (longitudStr.isEmpty() || !longitudStr.matches("\\d+")) {
             JOptionPane.showMessageDialog(this, "La longitud debe ser un número entero mayor a 0.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
@@ -850,6 +1053,18 @@ private DefaultMutableTreeNode cargarNodosDesdeJSON(JSONObject jsonObject) {
         //  **Evitar que el archivo tenga hijos**
         newNode.setAllowsChildren(false);
     } else {
+        
+         for (int i = 0; i < selectedNode.getChildCount(); i++) {
+        DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) selectedNode.getChildAt(i);
+        String childName = childNode.toString();
+        
+        // Verificar si el nombre coincide (sin los detalles entre "[ ]")
+        if (childName.startsWith(nombre + " [Directorio")) {
+            JOptionPane.showMessageDialog(this, "Ya existe un directorio con el mismo nombre en este nivel.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+    }
+
         // Formato del directorio con su información
         String infoDirectorio = nombre + " [Directorio | Permisos: " + permisos + " | Creado: " + fechaCreacion + "]";
         newNode = new DefaultMutableTreeNode(infoDirectorio);
@@ -864,6 +1079,8 @@ private DefaultMutableTreeNode cargarNodosDesdeJSON(JSONObject jsonObject) {
     
     registrarLog("creó", nombre);
 panelDisco.actualizarDisco();
+actualizarTablaArchivos();
+
     }//GEN-LAST:event_btCrearActionPerformed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
@@ -877,6 +1094,7 @@ panelDisco.actualizarDisco();
     guardarArbolEnJSON(root);
      guardarUsuarioEnArchivo(lbUsuact.getText());
      guardarLogEnArchivo();
+     guardarTablaEnCSV(); 
     }//GEN-LAST:event_formWindowClosing
 
     private void btCambiarusuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCambiarusuActionPerformed
@@ -955,7 +1173,9 @@ panelDisco.actualizarDisco();
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanelDisco;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSeparator jSeparator1;
@@ -966,6 +1186,7 @@ panelDisco.actualizarDisco();
     private javax.swing.JLabel lbModoact;
     private javax.swing.JLabel lbUsuact;
     private javax.swing.JTextArea taLog;
+    private javax.swing.JTable tablaArchivos;
     private javax.swing.JTextField tfLongitud;
     private javax.swing.JTextField tfNombre;
     private javax.swing.JTextField tfSelectednode;
