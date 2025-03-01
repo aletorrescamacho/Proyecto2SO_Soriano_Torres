@@ -47,4 +47,16 @@ public class ListaEnlazadaBloques {
     public Bloque getPrimerBloque() {
         return cabeza;
     }
+    
+    public boolean contieneBloque(Bloque bloque) {
+    Bloque actual = cabeza;
+    while (actual != null) {
+        if (actual == bloque) {
+            return true; // El bloque pertenece a esta lista
+        }
+        actual = actual.siguiente;
+    }
+    return false; // No se encontró el bloque en esta lista
+}
+
 }

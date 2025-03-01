@@ -4,6 +4,8 @@
  */
 package ui;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.JOptionPane;
@@ -15,21 +17,40 @@ import org.json.JSONObject;
 import java.io.*;
 import java.nio.file.*;
 import org.json.JSONException;
+import proyecto2so.soriano.torres.Archivo;
+import proyecto2so.soriano.torres.SistemaArchivos;
+import proyecto2so.soriano.torres.Util;
+
 
 /**
  *
  * @author Aless
  */
 public class MainWindow extends javax.swing.JFrame {
+public SistemaArchivos sistemaArchivos; // Instancia de SistemaArchivos
+private Util util;
+ private PanelDisco panelDisco;
 
     /**
      * Creates new form MainWindow
      */
     public MainWindow() {
+        this.sistemaArchivos = new SistemaArchivos(); // Inicializar sistema de archivos
         initComponents();
         this.setLocationRelativeTo(null); 
         jTree1.setCellRenderer(new CustomTreeRenderer());
+        this.util = new Util(); 
+        
+          this.sistemaArchivos = new SistemaArchivos(); // Inicializar sistema de archivos
+        this.panelDisco = new PanelDisco(sistemaArchivos); // Pasar el sistema de archivos
 
+    panelDisco.setPreferredSize(new Dimension(500, 500));
+
+    jPanelDisco.setLayout(new BorderLayout()); // Usa un layout adecuado
+    jPanelDisco.add(panelDisco, BorderLayout.CENTER); // Agregar al centro
+
+    jPanelDisco.revalidate(); // Refrescar la interfaz
+    jPanelDisco.repaint(); // Forzar que se vuelva a dibujar
     }
 
     private void cargarLogDesdeArchivo() {
@@ -199,6 +220,7 @@ private DefaultMutableTreeNode cargarNodosDesdeJSON(JSONObject jsonObject) {
         jScrollPane2 = new javax.swing.JScrollPane();
         jTree1 = new javax.swing.JTree();
         jPanel2 = new javax.swing.JPanel();
+        jPanelDisco = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         taLog = new javax.swing.JTextArea();
@@ -504,7 +526,7 @@ private DefaultMutableTreeNode cargarNodosDesdeJSON(JSONObject jsonObject) {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addGap(15, 15, 15)
                 .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -512,23 +534,40 @@ private DefaultMutableTreeNode cargarNodosDesdeJSON(JSONObject jsonObject) {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(12, 12, 12))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(47, 47, 47)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 423, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 391, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(76, 76, 76))
         );
 
         jTabbedPane1.addTab("JTree", jPanel1);
+
+        javax.swing.GroupLayout jPanelDiscoLayout = new javax.swing.GroupLayout(jPanelDisco);
+        jPanelDisco.setLayout(jPanelDiscoLayout);
+        jPanelDiscoLayout.setHorizontalGroup(
+            jPanelDiscoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 312, Short.MAX_VALUE)
+        );
+        jPanelDiscoLayout.setVerticalGroup(
+            jPanelDiscoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 256, Short.MAX_VALUE)
+        );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 875, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(239, 239, 239)
+                .addComponent(jPanelDisco, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(324, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 514, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(46, 46, 46)
+                .addComponent(jPanelDisco, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(212, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("SD y Tabla", jPanel2);
@@ -608,19 +647,40 @@ private DefaultMutableTreeNode cargarNodosDesdeJSON(JSONObject jsonObject) {
         return;
     }
 
+    // variable que guarda el nuevo nombre que se le va a dar al archivo/directorio del textfield
     String nuevoNombre = tfSelectednode.getText().trim();
     if (nuevoNombre.isEmpty()) {
         JOptionPane.showMessageDialog(this, "El nombre no puede estar vacío.", "Error", JOptionPane.ERROR_MESSAGE);
         return;
     }
 
-    // Obtener la información adicional del nodo sin modificarla
+    
+    // variable que tiene el string del texto del nodo seleccionado archivo o directorio
     String nodoTexto = selectedNode.getUserObject().toString();
+    
+    //obtenemos detalles del archivo
     int index = nodoTexto.indexOf("[");
     String detalles = (index != -1) ? nodoTexto.substring(index) : ""; // Mantener todo lo demás
-
-    // Actualizar el nodo con el nuevo nombre sin perder datos
+    
+    //debemos obtener el nombre ORIGINAL del archivo antes de modificarlo para cambiarlo tambien en la ll de archivos si es que es un archivo, si no pues no pasa nada
+    String nombreOg = util.extraerNombreArchivo(nodoTexto);
+    
+    //antes de modificar el nombre en el JTREE, si se trata de un archivo, lo hacemos en el objeto arhcivo correpondiente al archivo seleccionado:
+    //LOGICA TOCHA Y MANIPULACION DE LAS EDDS PARA MODIFICAR EFICIENTEMENTE EL NOMBRE DE UN ARCHIVO
+    //verificar si es un archivo o es un directorio
+    if (nodoTexto.contains("[Tamaño:")) {
+       
+       //buscamos el archivo con la funcion de buscar archivos de la clase sistemaarchivos con su nombre original antes de  er modificado
+       Archivo archivoModif = sistemaArchivos.buscarArchivo(nombreOg);
+     
+       //ahora modificamos el nombre del archivo seleccionado 
+       sistemaArchivos.renombrarArchivo(archivoModif, nuevoNombre);  
+    }
+    
+    // Actualizar el nodo con el nuevo nombre sin perder datos EN EL JTREE
     selectedNode.setUserObject(nuevoNombre + " " + detalles);
+    
+    
 
     DefaultTreeModel model = (DefaultTreeModel) jTree1.getModel();
     model.reload();
@@ -656,6 +716,26 @@ private DefaultMutableTreeNode cargarNodosDesdeJSON(JSONObject jsonObject) {
         return;
     }
     
+    
+    //LOGICA TOCHA Y MANIPULACION DE LAS EDDS PARA ELIMINAR EFICIENTEMENTE UN ARCHIVO
+    //verificar si es un archivo o es un directorio
+    if (selectedNode.getUserObject().toString().contains("[Tamaño:")) {
+        
+       //dado el string completo que se muestra en el jtree, usamos la funcion que esta en la clase util que nos permite extraer solo el nombre del archivo 
+       String nomArchivoElim = util.extraerNombreArchivo(selectedNode.getUserObject().toString());
+       
+       //buscamos el archivo con la funcion de buscar archivos de la clase sistemaarchivos
+       Archivo archivoElim = sistemaArchivos.buscarArchivo(nomArchivoElim);
+       
+       //con el archivo encontrado, liberamos sus bloques asignados
+       sistemaArchivos.liberarBloquesArchivo(archivoElim);
+       
+       //ahora eliminamos el archivo seleccionado de la lista enlazada de archivos
+       sistemaArchivos.eliminarArchivo(archivoElim);
+
+        
+    }
+
     String nombreEliminado = selectedNode.toString();
     // Si el nodo tiene hijos, eliminamos todos sus subnodos
     selectedNode.removeAllChildren(); 
@@ -727,7 +807,7 @@ private DefaultMutableTreeNode cargarNodosDesdeJSON(JSONObject jsonObject) {
         return;
     }
 
-    // **🚨 Nueva verificación: No se pueden agregar hijos a un archivo 🚨**
+    
     if (!selectedNode.getAllowsChildren()) {
         JOptionPane.showMessageDialog(this, "No puedes agregar hijos a un archivo.", "Error", JOptionPane.ERROR_MESSAGE);
         return;
@@ -752,10 +832,20 @@ private DefaultMutableTreeNode cargarNodosDesdeJSON(JSONObject jsonObject) {
             JOptionPane.showMessageDialog(this, "La longitud debe ser mayor a 0.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
+        
+        if (longitud > sistemaArchivos.bloquesLibres) {
+            JOptionPane.showMessageDialog(this, "No hay suficiente espacio para dicha longitud", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
         // Formato del archivo con su información
         String infoArchivo = nombre + " [Tamaño: " + longitud + " | Permisos: " + permisos + " | Creado: " + fechaCreacion + "]";
         newNode = new DefaultMutableTreeNode(infoArchivo);
+        
+        //crear archivo objeto tipo archivo
+        Archivo nuevoArchivo = new Archivo(nombre, longitud);
+        sistemaArchivos.asignarBloquesArchivo(nuevoArchivo, longitud);
+        sistemaArchivos.agregarArchivo(nuevoArchivo);
 
         //  **Evitar que el archivo tenga hijos**
         newNode.setAllowsChildren(false);
@@ -773,7 +863,7 @@ private DefaultMutableTreeNode cargarNodosDesdeJSON(JSONObject jsonObject) {
     tfLongitud.setText("");
     
     registrarLog("creó", nombre);
-
+panelDisco.actualizarDisco();
     }//GEN-LAST:event_btCrearActionPerformed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
@@ -804,6 +894,8 @@ private DefaultMutableTreeNode cargarNodosDesdeJSON(JSONObject jsonObject) {
     guardarUsuarioEnArchivo(nuevoUsuario);
     }//GEN-LAST:event_btCambiarusuActionPerformed
 
+    
+ 
     /**
      * @param args the command line arguments
      */
@@ -863,6 +955,7 @@ private DefaultMutableTreeNode cargarNodosDesdeJSON(JSONObject jsonObject) {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanelDisco;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSeparator jSeparator1;

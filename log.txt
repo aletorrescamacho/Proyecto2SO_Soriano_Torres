@@ -1,1 +1,49 @@
 [28/02/2025 12:02:39] sdsds creó: ccc
+[28/02/2025 18:58:47] sdsds creó: aaaa
+[28/02/2025 19:01:03] sdsds creó: aaabbb
+[28/02/2025 19:01:07] sdsds eliminó: aaabbb [Tamaño: 3 | Permisos: rwx | Creado: 28/02/2025 19:01:03]
+[28/02/2025 19:13:28] sdsds creó: ale
+[28/02/2025 19:19:26] sdsds creó: a
+[28/02/2025 19:19:40] sdsds creó: eee
+[28/02/2025 19:38:29] sdsds creó: sss
+[28/02/2025 19:38:41] sdsds creó: 3333
+[28/02/2025 19:38:54] sdsds creó: ccc
+[28/02/2025 19:39:08] sdsds creó: ddd
+[28/02/2025 19:39:24] sdsds eliminó: ddd [Tamaño: 1 | Permisos: rwx | Creado: 28/02/2025 19:39:08]
+[28/02/2025 19:39:32] sdsds eliminó: sss [Tamaño: 1 | Permisos: rwx | Creado: 28/02/2025 19:38:29]
+[28/02/2025 19:55:47] sdsds creó: aaa
+[28/02/2025 19:56:03] sdsds creó: aaaaaa
+[28/02/2025 19:56:18] sdsds creó: vvvv
+[28/02/2025 19:56:30] sdsds eliminó: aaa [Tamaño: 2 | Permisos: rwx | Creado: 28/02/2025 19:55:47]
+[28/02/2025 19:56:50] sdsds creó: www
+[28/02/2025 20:01:07] sdsds creó: a
+[28/02/2025 20:01:19] sdsds creó: b
+[28/02/2025 20:01:27] sdsds eliminó: a [Tamaño: 2 | Permisos: rwx | Creado: 28/02/2025 20:01:07]
+[28/02/2025 20:01:40] sdsds creó: c
+[28/02/2025 20:23:25] sdsds creó: aaa30
+[28/02/2025 20:23:43] sdsds creó: a22
+[28/02/2025 20:24:00] sdsds creó: aaa4
+[28/02/2025 20:24:26] sdsds eliminó: aaa30 [Tamaño: 30 | Permisos: rwx | Creado: 28/02/2025 20:23:25]
+[28/02/2025 20:25:13] sdsds creó: a
+[28/02/2025 20:26:45] sdsds modificó: aaa45
+[28/02/2025 21:10:05] sdsds creó: aaa
+[28/02/2025 21:10:26] sdsds creó: 333
+[28/02/2025 21:11:26] sdsds creó: vvvv
+[28/02/2025 21:13:44] sdsds creó: zzz
+[28/02/2025 21:30:20] sdsds creó: vvvvvvv
+[28/02/2025 21:32:53] sdsds creó: dddddd
+[28/02/2025 21:33:19] sdsds creó: aa12
+[28/02/2025 21:33:44] sdsds creó: aaa
+[28/02/2025 21:34:08] sdsds creó: ffff
+[28/02/2025 21:38:38] sdsds creó: fffffffff
+[28/02/2025 21:44:29] sdsds creó: hhh
+[28/02/2025 21:48:34] sdsds creó: bbbbbbb
+[28/02/2025 21:56:10] sdsds creó: rrrrrrrrr
+[28/02/2025 22:05:25] sdsds creó: eeeeee
+[28/02/2025 22:06:23] sdsds eliminó: eeeeee [Tamaño: 32 | Permisos: rwx | Creado: 28/02/2025 22:05:25]
+[28/02/2025 22:06:47] sdsds creó: a
+[28/02/2025 22:07:00] sdsds creó: b
+[28/02/2025 22:07:17] sdsds creó: c
+[28/02/2025 22:07:43] sdsds eliminó: a [Tamaño: 1 | Permisos: rwx | Creado: 28/02/2025 22:06:47]
+[28/02/2025 22:07:47] sdsds eliminó: c [Tamaño: 2 | Permisos: rwx | Creado: 28/02/2025 22:07:17]
+[28/02/2025 22:08:12] sdsds creó: bbbb

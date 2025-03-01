@@ -1,29 +1,84 @@
 {
     "hijos": [
         {
-            "hijos": [
-                {
-                    "hijos": [],
-                    "nombre": "ale1234 [Tamaño: 1 | Permisos: rwx | Creado: 27/02/2025 22:43:29]"
-                },
-                {
-                    "hijos": [],
-                    "nombre": "sss [Directorio | Permisos: rwx | Creado: 27/02/2025 23:20:33]"
-                },
-                {
-                    "hijos": [],
-                    "nombre": "ccc [Tamaño: 3 | Permisos: rwx | Creado: 28/02/2025 12:02:39]"
-                }
-            ],
-            "nombre": "hola23 [Directorio | Permisos: rwx | Creado: 27/02/2025 22:42:55]"
+            "hijos": [],
+            "nombre": "b [Tamaño: 10 | Permisos: rwx | Creado: 28/02/2025 20:01:19]"
         },
         {
             "hijos": [],
-            "nombre": "q [Tamaño: 1 | Permisos: rwx | Creado: 27/02/2025 23:16:06]"
+            "nombre": "c [Tamaño: 5 | Permisos: rwx | Creado: 28/02/2025 20:01:40]"
         },
         {
             "hijos": [],
-            "nombre": "ssfffffffffff [Tamaño: 33 | Permisos: rwx | Creado: 27/02/2025 23:20:16]"
+            "nombre": "a22 [Tamaño: 2 | Permisos: rwx | Creado: 28/02/2025 20:23:43]"
+        },
+        {
+            "hijos": [],
+            "nombre": "aaa45 [Tamaño: 2 | Permisos: rwx | Creado: 28/02/2025 20:24:00]"
+        },
+        {
+            "hijos": [],
+            "nombre": "a [Tamaño: 31 | Permisos: rwx | Creado: 28/02/2025 20:25:13]"
+        },
+        {
+            "hijos": [],
+            "nombre": "aaa [Tamaño: 3 | Permisos: rwx | Creado: 28/02/2025 21:10:05]"
+        },
+        {
+            "hijos": [],
+            "nombre": "333 [Tamaño: 23 | Permisos: rwx | Creado: 28/02/2025 21:10:26]"
+        },
+        {
+            "hijos": [],
+            "nombre": "vvvv [Tamaño: 4 | Permisos: rwx | Creado: 28/02/2025 21:11:26]"
+        },
+        {
+            "hijos": [],
+            "nombre": "zzz [Tamaño: 23 | Permisos: rwx | Creado: 28/02/2025 21:13:44]"
+        },
+        {
+            "hijos": [],
+            "nombre": "vvvvvvv [Tamaño: 5 | Permisos: rwx | Creado: 28/02/2025 21:30:20]"
+        },
+        {
+            "hijos": [],
+            "nombre": "dddddd [Tamaño: 23 | Permisos: rwx | Creado: 28/02/2025 21:32:53]"
+        },
+        {
+            "hijos": [],
+            "nombre": "aa12 [Tamaño: 12 | Permisos: rwx | Creado: 28/02/2025 21:33:19]"
+        },
+        {
+            "hijos": [],
+            "nombre": "aaa [Tamaño: 22 | Permisos: rwx | Creado: 28/02/2025 21:33:44]"
+        },
+        {
+            "hijos": [],
+            "nombre": "ffff [Tamaño: 22 | Permisos: rwx | Creado: 28/02/2025 21:34:08]"
+        },
+        {
+            "hijos": [],
+            "nombre": "fffffffff [Tamaño: 32 | Permisos: rwx | Creado: 28/02/2025 21:38:38]"
+        },
+        {
+            "hijos": [],
+            "nombre": "hhh [Tamaño: 32 | Permisos: rwx | Creado: 28/02/2025 21:44:29]"
+        },
+        {
+            "hijos": [],
+            "nombre": "bbbbbbb [Tamaño: 32 | Permisos: rwx | Creado: 28/02/2025 21:48:34]"
+        },
+        {
+            "hijos": [],
+            "nombre": "rrrrrrrrr [Tamaño: 23 | Permisos: rwx | Creado: 28/02/2025 21:56:10]"
+        },
+        {
+            "hijos": [],
+            "nombre": "b [Tamaño: 32 | Permisos: rwx | Creado: 28/02/2025 22:07:00]"
+        },
+        {
+            "hijos": [],
+            "nombre": "bbbb [Tamaño: 3 | Permisos: rwx | Creado: 28/02/2025 22:08:12]"
         }
     ],
     "nombre": "JTree"

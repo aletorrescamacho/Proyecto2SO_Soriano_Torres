@@ -11,17 +11,19 @@ package proyecto2so.soriano.torres;
 
 
 public class Archivo {
-    String nombre;
-    int tamano;                 // Número de bloques asignados
-    ListaEnlazadaBloques listaBloques;  // Lista enlazada de bloques asignados al archivo
+    public String nombre;
+    int tamano; // Número de bloques asignados
+    public ListaEnlazadaBloques listaBloques; // Lista enlazada de bloques del archivo
+    public Archivo siguiente; // Referencia al siguiente archivo en la lista
 
     public Archivo(String nombre, int tamano) {
         this.nombre = nombre;
         this.tamano = tamano;
-        this.listaBloques = new ListaEnlazadaBloques(); // Inicializar la lista de bloques
+        this.listaBloques = new ListaEnlazadaBloques(); // Inicializar lista de bloques
+        this.siguiente = null; // Por defecto, no tiene enlace con otro archivo
     }
 
-    // Método para mostrar los bloques asignados al archivo
+    //  Método para mostrar los bloques asignados al archivo
     public void mostrarBloques() {
         System.out.println("Archivo: " + nombre);
         listaBloques.mostrarLista();

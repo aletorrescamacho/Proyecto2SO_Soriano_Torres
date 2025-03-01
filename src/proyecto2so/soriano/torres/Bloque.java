@@ -10,9 +10,9 @@ package proyecto2so.soriano.torres;
  */
 
 public class Bloque {
-    int id;          // Identificador del bloque (posición en el array)
-    Bloque siguiente;  // Referencia directa al siguiente bloque (null si es el último)
-    boolean ocupado; // Estado del bloque (true = usado, false = libre)
+    public int id;          // Identificador del bloque (posición en el array)
+    public Bloque siguiente;  // Referencia directa al siguiente bloque (null si es el último)
+    public boolean ocupado; // Estado del bloque (true = usado, false = libre)
 
     public Bloque(int id) {
         this.id = id;
