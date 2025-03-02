@@ -67,6 +67,7 @@ protected void paintComponent(Graphics g) {
     }
 
     //Ahora pintar los bloques que están **asignados a archivos**
+ 
     Archivo archivoActual = sistemaArchivos.getListaArchivos().getCabeza(); // Primer archivo
 
     while (archivoActual != null) { // Recorrer archivos

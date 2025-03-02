@@ -37,7 +37,8 @@ private DefaultTableModel modeloTabla;
      * Creates new form MainWindow
      */
     public MainWindow() {
-        this.sistemaArchivos = new SistemaArchivos(); // Inicializar sistema de archivos
+                  this.sistemaArchivos = new SistemaArchivos(); // Inicializar sistema de archivos
+        this.sistemaArchivos = SistemaArchivos.cargarEstado(); // Inicializar sistema de archivos
         initComponents();
          modeloTabla = (DefaultTableModel) tablaArchivos.getModel();
         cargarTablaDesdeCSV();
@@ -47,7 +48,7 @@ private DefaultTableModel modeloTabla;
         jTree1.setCellRenderer(new CustomTreeRenderer());
         this.util = new Util(); 
         
-          this.sistemaArchivos = new SistemaArchivos(); // Inicializar sistema de archivos
+
         this.panelDisco = new PanelDisco(sistemaArchivos); // Pasar el sistema de archivos
 
     panelDisco.setPreferredSize(new Dimension(500, 500));
@@ -908,7 +909,7 @@ private DefaultMutableTreeNode cargarNodosDesdeJSON(JSONObject jsonObject) {
     }
     
     
-    //LOGICA TOCHA Y MANIPULACION DE LAS EDDS PARA ELIMINAR EFICIENTEMENTE UN ARCHIVO
+    //LOGICA Y MANIPULACION DE LAS EDDS PARA ELIMINAR EFICIENTEMENTE UN ARCHIVO
     //verificar si es un archivo o es un directorio
     if (selectedNode.getUserObject().toString().contains("[Tamaño:")) {
         
@@ -922,23 +923,48 @@ private DefaultMutableTreeNode cargarNodosDesdeJSON(JSONObject jsonObject) {
        sistemaArchivos.liberarBloquesArchivo(archivoElim);
        
        //ahora eliminamos el archivo seleccionado de la lista enlazada de archivos
-       sistemaArchivos.eliminarArchivo(archivoElim);
-
-        
+       sistemaArchivos.eliminarArchivo(archivoElim); 
+       
+       registrarLog("eliminó", nomArchivoElim);
     }
-
-    String nombreEliminado = selectedNode.toString();
-    // Si el nodo tiene hijos, eliminamos todos sus subnodos
-    selectedNode.removeAllChildren(); 
-
+    // 🔹 Si es un directorio, eliminar todos sus archivos y subdirectorios recursivamente
+    else {
+        eliminarDirectorio(selectedNode, model);
+         String nombreEliminado = selectedNode.toString();
+         registrarLog("eliminó", nombreEliminado);
+    }
+   
     // Eliminar el nodo padre
     parentNode.remove(selectedNode);
     model.reload();
     
     actualizarTablaArchivos();
 
-    registrarLog("eliminó", nombreEliminado);
+    
     }//GEN-LAST:event_btEliminarActionPerformed
+private void eliminarDirectorio(DefaultMutableTreeNode nodoDirectorio, DefaultTreeModel treeModel) {
+    if (nodoDirectorio == null) return;
+
+    // 🔹 Recorrer los hijos desde el final para evitar problemas al eliminar
+    for (int i = nodoDirectorio.getChildCount() - 1; i >= 0; i--) {
+        DefaultMutableTreeNode hijo = (DefaultMutableTreeNode) nodoDirectorio.getChildAt(i);
+
+        // 🔹 Si el hijo es un directorio, eliminarlo recursivamente
+        if (!hijo.getUserObject().toString().contains("[Tamaño:")) {
+            eliminarDirectorio(hijo, treeModel);
+        } 
+        // 🔹 Si el hijo es un archivo, eliminarlo correctamente
+        else {
+            String nomArchivoElim = util.extraerNombreArchivo(hijo.getUserObject().toString());
+            Archivo archivoElim = sistemaArchivos.buscarArchivo(nomArchivoElim);
+            sistemaArchivos.liberarBloquesArchivo(archivoElim);
+            sistemaArchivos.eliminarArchivo(archivoElim);
+        }
+
+        // 🔹 Eliminar el nodo del árbol
+        treeModel.removeNodeFromParent(hijo);
+    }
+}
 
     private void jTree1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTree1MouseClicked
          // Mostrar solo el nombre del nodo seleccionado en el JTextField
@@ -1090,9 +1116,11 @@ actualizarTablaArchivos();
     }//GEN-LAST:event_formWindowOpened
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        DefaultMutableTreeNode root = (DefaultMutableTreeNode) jTree1.getModel().getRoot();
-    guardarArbolEnJSON(root);
+     DefaultMutableTreeNode root = (DefaultMutableTreeNode) jTree1.getModel().getRoot();
+     guardarArbolEnJSON(root);
      guardarUsuarioEnArchivo(lbUsuact.getText());
+     
+     sistemaArchivos.guardarEstado();
      guardarLogEnArchivo();
      guardarTablaEnCSV(); 
     }//GEN-LAST:event_formWindowClosing

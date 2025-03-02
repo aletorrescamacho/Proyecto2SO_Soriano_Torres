@@ -3,6 +3,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package proyecto2so.soriano.torres;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+
 
 /**
  *
@@ -14,11 +21,14 @@ package proyecto2so.soriano.torres;
 // clase que maneja la asignacion de bloques a archivos
 
 public class SistemaArchivos {
+
     public static final int NUMERO_BLOQUES = 35; // Número fijo de bloques
     public boolean[] bitmap; // Bitmap para gestionar bloques libres
     public Bloque[] bloques; // Array de bloques del disco
     public int bloquesLibres; // Contador de bloques disponibles
     public ListaEnlazadaArchivos archivos; // Lista enlazada de archivos
+    private static final String RUTA_JSON = "src/proyecto2so/soriano/torres/sistema_archivos.json"; // Ruta dentro de src/proyecto2so
+
 
     public SistemaArchivos() {
         this.bitmap = new boolean[NUMERO_BLOQUES]; // Inicialmente, todos los bloques están libres
@@ -31,6 +41,10 @@ public class SistemaArchivos {
             bloques[i] = new Bloque(i);
             bitmap[i] = false; // Todos los bloques están libres al inicio
         }
+    }
+    
+    public ListaEnlazadaArchivos getListaArchivos() {
+        return archivos;
     }
 
     // Función para asignar bloques a un archivo y actualizar bloquesLibres
@@ -89,10 +103,6 @@ public class SistemaArchivos {
     public int getBloquesLibres() {
         return bloquesLibres;
     }
-    
-     public ListaEnlazadaArchivos getListaArchivos() {
-        return archivos;
-    }
 
     // ✅ Función para agregar un archivo a la lista enlazada de archivos
     public void agregarArchivo(Archivo archivo) {
@@ -128,6 +138,7 @@ public class SistemaArchivos {
     archivo.nombre = nuevoNombre; // Cambiar el nombre del archivo
     System.out.println("Archivo renombrado a: " + nuevoNombre);
 }
+
     
     public Bloque[] getBloques() {
     return this.bloques;
@@ -153,7 +164,41 @@ public Archivo getArchivoPorBloque(Bloque bloque) {
     return null; // No pertenece a ningún archivo
 }
 
+
+    public void guardarEstado() {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        File archivo = new File(RUTA_JSON);
+
+        try {
+            // Verificar si la carpeta "src/proyecto2so" existe antes de guardar
+            archivo.getParentFile().mkdirs(); 
+
+            FileWriter writer = new FileWriter(archivo);
+            gson.toJson(this, writer);
+            writer.close();
+            System.out.println("Estado guardado en: " + archivo.getAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     
+    // ✅ Cargar el estado desde JSON dentro de src/proyecto2so/
+    public static SistemaArchivos cargarEstado() {
+        Gson gson = new Gson();
+        File archivo = new File(RUTA_JSON);
+
+        if (!archivo.exists() || archivo.length() == 0) {
+            System.out.println("No hay estado previo. Iniciando nueva simulación.");
+            return new SistemaArchivos();
+        }
+
+        try (FileReader reader = new FileReader(archivo)) {
+            return gson.fromJson(reader, SistemaArchivos.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new SistemaArchivos();
+        }
+    }
 }
 
 
