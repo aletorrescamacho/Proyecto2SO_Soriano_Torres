@@ -37,7 +37,7 @@ private DefaultTableModel modeloTabla;
      * Creates new form MainWindow
      */
     public MainWindow() {
-                  this.sistemaArchivos = new SistemaArchivos(); // Inicializar sistema de archivos
+                  
         this.sistemaArchivos = SistemaArchivos.cargarEstado(); // Inicializar sistema de archivos
         initComponents();
          modeloTabla = (DefaultTableModel) tablaArchivos.getModel();

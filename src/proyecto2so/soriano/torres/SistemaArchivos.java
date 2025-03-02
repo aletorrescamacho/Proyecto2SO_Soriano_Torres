@@ -91,6 +91,7 @@ public class SistemaArchivos {
             bloquesLibres++; // Aumentar el contador de bloques libres
 
             Bloque siguiente = actual.siguiente;
+            bloques[id].siguiente = null; // 🔹 Romper la conexión dentro del array de bloques
             actual.siguiente = null; // Romper la conexión
             actual = siguiente;
         }
@@ -149,9 +150,9 @@ public class SistemaArchivos {
     return NUMERO_BLOQUES;
 }
 
-public Bloque getBloque(int id) {
-    return bloques[id]; // Retorna el bloque por su ID
-}
+    public Bloque getBloque(int id) {
+        return bloques[id]; // Retorna el bloque por su ID
+    }
 
 public Archivo getArchivoPorBloque(Bloque bloque) {
     Archivo actual = archivos.getCabeza();
