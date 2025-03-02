@@ -89,6 +89,7 @@ public class SistemaArchivos {
             bloquesLibres++; // Aumentar el contador de bloques libres
 
             Bloque siguiente = actual.siguiente;
+            bloques[id].siguiente = null; // 🔹 Romper la conexión dentro del array de bloques
             actual.siguiente = null; // Romper la conexión
             actual = siguiente;
         }
