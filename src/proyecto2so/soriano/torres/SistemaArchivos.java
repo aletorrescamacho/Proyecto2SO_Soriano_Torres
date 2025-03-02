@@ -81,25 +81,28 @@ public class SistemaArchivos {
     }
 
     //  Función para liberar los bloques de un archivo y actualizar bloquesLibres
-    public void liberarBloquesArchivo(Archivo archivo) {
-        Bloque actual = archivo.listaBloques.getPrimerBloque();
+    public void liberarBloquesArchivo(Archivo archivo) { 
+    Bloque actual = archivo.listaBloques.getPrimerBloque();
 
-        while (actual != null) {
-            int id = actual.id;
+    while (actual != null) {
+        int id = actual.id;
+
+        if (bitmap[id]) { // 🔹 Solo incrementar si el bloque estaba ocupado
             bitmap[id] = false; // Marcar como libre en el bitmap
             bloques[id].ocupado = false; // Actualizar estado del bloque
             bloquesLibres++; // Aumentar el contador de bloques libres
-
-            Bloque siguiente = actual.siguiente;
-            bloques[id].siguiente = null; // 🔹 Romper la conexión dentro del array de bloques
-            actual.siguiente = null; // Romper la conexión
-            actual = siguiente;
         }
 
-        archivo.listaBloques = new ListaEnlazadaBloques(); // Resetear la lista del archivo
-        System.out.println("Se liberaron los bloques del archivo '" + archivo.nombre + "'.");
+        Bloque siguiente = actual.siguiente;
+        bloques[id].siguiente = null; // 🔹 Romper la conexión dentro del array de bloques
+        actual.siguiente = null; // 🔹 Romper la referencia en el objeto actual
+
+        actual = siguiente;
     }
 
+    archivo.listaBloques = new ListaEnlazadaBloques(); // Resetear la lista del archivo
+    System.out.println("Se liberaron los bloques del archivo '" + archivo.nombre + "'.");
+}
     //  Método para obtener la cantidad de bloques libres
     public int getBloquesLibres() {
         return bloquesLibres;
