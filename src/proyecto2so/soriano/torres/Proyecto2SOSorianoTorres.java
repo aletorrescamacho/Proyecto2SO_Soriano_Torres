@@ -4,6 +4,8 @@
  */
 package proyecto2so.soriano.torres;
 
+import ui.MainWindow;
+
 /**
  *
  * @author Aless
@@ -13,8 +15,17 @@ public class Proyecto2SOSorianoTorres {
     /**
      * @param args the command line arguments
      */
+    
+     
     public static void main(String[] args) {
-        // TODO code application logic here
+        // Asegurar ejecución en el hilo de eventos de Swing
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new MainWindow().setVisible(true); // Mostrar la ventana principal
+            }
+        });
+        
+        //
     }
     
 }

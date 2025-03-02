@@ -1,0 +1,17 @@
+[02/03/2025 10:24:19] luis creó: a1
+[02/03/2025 10:24:42] luis eliminó: a1
+[02/03/2025 10:25:08] luis creó: d1
+[02/03/2025 10:25:14] luis creó: d2
+[02/03/2025 10:25:32] luis creó: a1
+[02/03/2025 10:25:48] luis creó: a2
+[02/03/2025 10:26:15] luis creó: a3
+[02/03/2025 10:27:25] luis eliminó: d2 [Directorio | Permisos: rwx | Creado: 02/03/2025 10:25:14]
+[02/03/2025 10:27:53] luis creó: a5
+[02/03/2025 10:28:14] luis eliminó: d1 [Directorio | Permisos: rwx | Creado: 02/03/2025 10:25:08]
+[02/03/2025 10:28:17] luis eliminó: a3
+[02/03/2025 10:28:20] luis eliminó: a5
+[02/03/2025 10:34:33] luis creó: a1
+[02/03/2025 10:34:47] luis creó: d1
+[02/03/2025 10:35:01] luis creó: a2
+[02/03/2025 10:35:38] luis eliminó: d1 [Directorio | Permisos: rwx | Creado: 02/03/2025 10:34:47]
+[02/03/2025 10:36:04] luis eliminó: a1
