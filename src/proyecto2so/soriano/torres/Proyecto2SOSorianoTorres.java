@@ -15,6 +15,8 @@ public class Proyecto2SOSorianoTorres {
     /**
      * @param args the command line arguments
      */
+    
+     
     public static void main(String[] args) {
         // Asegurar ejecución en el hilo de eventos de Swing
         java.awt.EventQueue.invokeLater(new Runnable() {
